@@ -10,12 +10,12 @@ import cv2
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import requests
 import torch
 from kornia_moons.feature import visualize_LAF
 
 import kornia as K
 from kornia.core import Tensor
+from security import safe_requests
 
 mpl.use("Agg")
 
@@ -25,7 +25,7 @@ def download_tutorials_examples(download_infos: dict[str, str], directory: Path)
     for filename, path in download_infos.items():
         url = URL_BASE + path
         # perform request
-        response = requests.get(url, timeout=60).content
+        response = safe_requests.get(url, timeout=60).content
 
         path = directory / filename
         with open(path, "wb") as fp:
@@ -34,7 +34,7 @@ def download_tutorials_examples(download_infos: dict[str, str], directory: Path)
 
 def read_img_from_url(url: str, resize_to: Optional[tuple[int, int]] = None, **resize_kwargs) -> torch.Tensor:
     # perform request
-    response = requests.get(url, timeout=60).content
+    response = safe_requests.get(url, timeout=60).content
     # convert to array of ints
     nparr = np.frombuffer(response, np.uint8)
     # convert to image array and resize
